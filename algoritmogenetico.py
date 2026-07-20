@@ -4,7 +4,10 @@ from pyamaze import maze, agent, COLOR
 TAMANHO_POPULACAO = 300       
 COMPRIMENTO_CROMOSSOMO = 2500 
 TAXA_MUTACAO = 0.03           
-GERACOES = 1000               
+GERACOES = 1000
+DIMENSAO = 100 
+inicio = (DIMENSAO, DIMENSAO)
+destino = (1, 1)               
 
 DIRECOES = ['N', 'S', 'E', 'W']
 
@@ -62,16 +65,32 @@ def mutar(individuo):
             individuo[i] = random.choice(DIRECOES)
     return individuo
 
+def labirinto(m, inicio, final, caminhos_historicos, melhor_caminho_geral ):
+    dicionario_animacao = {}
 
-if __name__ == '__main__':
-    DIMENSAO = 100
+    for caminho in caminhos_historicos:
+        caminho_animado_hist = {}
+        for idx in range(len(caminho) - 1):
+            caminho_animado_hist[caminho[idx]] = caminho[idx + 1]
+            
+        agente_hist = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True, color=COLOR.red)
+        dicionario_animacao[agente_hist] = caminho_animado_hist
+
+    caminho_animado_final = {}
+    for idx in range(len(melhor_caminho_geral) - 1):
+        caminho_animado_final[melhor_caminho_geral[idx]] = melhor_caminho_geral[idx + 1]
+
+    agente_final = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True)
+    dicionario_animacao[agente_final] = caminho_animado_final
+
+    m.tracePath(dicionario_animacao, delay=15) 
+    m.run()
+
+def genetico():
     m = maze(DIMENSAO, DIMENSAO)
     
     m.CreateMaze(loopPercent=100)
     
-    inicio = (DIMENSAO, DIMENSAO)
-    destino = (1, 1)
-
     populacao = criar_populacao()
     melhor_caminho_geral = []
     encontrou_solucao = False
@@ -122,22 +141,10 @@ if __name__ == '__main__':
     if not encontrou_solucao:
         print("\nO algoritmo encerrou as gerações. Exibindo a melhor rota parcial encontrada até o momento.")
 
-    dicionario_animacao = {}
+    return m, caminhos_historicos, melhor_caminho_geral
 
-    for caminho in caminhos_historicos:
-        caminho_animado_hist = {}
-        for idx in range(len(caminho) - 1):
-            caminho_animado_hist[caminho[idx]] = caminho[idx + 1]
-            
-        agente_hist = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True, color=COLOR.red)
-        dicionario_animacao[agente_hist] = caminho_animado_hist
+if __name__ == '__main__':
+    m, caminhos_historicos, melhor_caminho_geral = genetico()
+    labirinto(m, inicio, destino, caminhos_historicos, melhor_caminho_geral)
 
-    caminho_animado_final = {}
-    for idx in range(len(melhor_caminho_geral) - 1):
-        caminho_animado_final[melhor_caminho_geral[idx]] = melhor_caminho_geral[idx + 1]
-
-    agente_final = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True)
-    dicionario_animacao[agente_final] = caminho_animado_final
-
-    m.tracePath(dicionario_animacao, delay=15) 
-    m.run()
+    
