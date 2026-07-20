@@ -1,5 +1,5 @@
 import random
-from pyamaze import maze, agent
+from pyamaze import maze, agent, COLOR
 
 TAMANHO_POPULACAO = 300       
 COMPRIMENTO_CROMOSSOMO = 2500 
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     populacao = criar_populacao()
     melhor_caminho_geral = []
     encontrou_solucao = False
+    caminhos_historicos = []
 
     for geracao in range(GERACOES):
         avaliacoes = [calcular_fitness(ind, m, inicio, destino) for ind in populacao]
@@ -88,6 +89,9 @@ if __name__ == '__main__':
         
         posicao_final = melhor_caminho_geral[-1]
         distancia_restante = abs(posicao_final[0] - destino[0]) + abs(posicao_final[1] - destino[1])
+
+        if (geracao + 1) % 5 == 0:
+            caminhos_historicos.append(melhor_caminho_geral.copy())
 
         if (geracao + 1) % 10 == 0 or distancia_restante == 0:
             print(f"Geração {geracao+1:04d} | Melhor Fitness: {max_fitness:.1f} | Posição Final: {posicao_final} | Distância até Destino: {distancia_restante}")
@@ -118,10 +122,22 @@ if __name__ == '__main__':
     if not encontrou_solucao:
         print("\nO algoritmo encerrou as gerações. Exibindo a melhor rota parcial encontrada até o momento.")
 
-    caminho_animado = {}
-    for idx in range(len(melhor_caminho_geral) - 1):
-        caminho_animado[melhor_caminho_geral[idx]] = melhor_caminho_geral[idx + 1]
+    dicionario_animacao = {}
 
-    a = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True)
-    m.tracePath({a: caminho_animado}, delay=15) 
+    for caminho in caminhos_historicos:
+        caminho_animado_hist = {}
+        for idx in range(len(caminho) - 1):
+            caminho_animado_hist[caminho[idx]] = caminho[idx + 1]
+            
+        agente_hist = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True, color=COLOR.red)
+        dicionario_animacao[agente_hist] = caminho_animado_hist
+
+    caminho_animado_final = {}
+    for idx in range(len(melhor_caminho_geral) - 1):
+        caminho_animado_final[melhor_caminho_geral[idx]] = melhor_caminho_geral[idx + 1]
+
+    agente_final = agent(m, x=inicio[0], y=inicio[1], footprints=True, filled=True)
+    dicionario_animacao[agente_final] = caminho_animado_final
+
+    m.tracePath(dicionario_animacao, delay=15) 
     m.run()
