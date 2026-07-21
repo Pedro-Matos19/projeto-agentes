@@ -119,9 +119,9 @@ class PathCache:
 
     def metrics(self) -> dict[str, int]:
         return {
-            "nós_expandidos": self.nodes_expanded,
-            "nós_gerados": self.nodes_generated,
-            "fronteira_máxima": self.max_frontier,
+            "nos_expandidos": self.nodes_expanded,
+            "nos_gerados": self.nodes_generated,
+            "fronteira_maxima": self.max_frontier,
             "buscas_a_estrela": self.search_count,
         }
 
