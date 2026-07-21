@@ -4,10 +4,7 @@ from pyamaze import maze, agent, COLOR
 TAMANHO_POPULACAO = 300       
 COMPRIMENTO_CROMOSSOMO = 2500 
 TAXA_MUTACAO = 0.03           
-GERACOES = 1000
-DIMENSAO = 100 
-inicio = (DIMENSAO, DIMENSAO)
-destino = (1, 1)               
+GERACOES = 1000         
 
 DIRECOES = ['N', 'S', 'E', 'W']
 
@@ -65,7 +62,7 @@ def mutar(individuo):
             individuo[i] = random.choice(DIRECOES)
     return individuo
 
-def labirinto(m, inicio, final, caminhos_historicos, melhor_caminho_geral ):
+def mostrar_solucao(m, inicio, final, caminhos_historicos, melhor_caminho_geral ):
     dicionario_animacao = {}
 
     for caminho in caminhos_historicos:
@@ -86,10 +83,7 @@ def labirinto(m, inicio, final, caminhos_historicos, melhor_caminho_geral ):
     m.tracePath(dicionario_animacao, delay=15) 
     m.run()
 
-def genetico():
-    m = maze(DIMENSAO, DIMENSAO)
-    
-    m.CreateMaze(loopPercent=100)
+def genetico(m, inicio, destino):
     
     populacao = criar_populacao()
     melhor_caminho_geral = []
@@ -141,10 +135,10 @@ def genetico():
     if not encontrou_solucao:
         print("\nO algoritmo encerrou as gerações. Exibindo a melhor rota parcial encontrada até o momento.")
 
-    return m, caminhos_historicos, melhor_caminho_geral
+    mostrar_solucao(m, inicio, destino, caminhos_historicos, melhor_caminho_geral)
 
 if __name__ == '__main__':
-    m, caminhos_historicos, melhor_caminho_geral = genetico()
-    labirinto(m, inicio, destino, caminhos_historicos, melhor_caminho_geral)
+    genetico()
+    
 
     

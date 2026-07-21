@@ -1,3 +1,4 @@
+import algoritmogenetico
 import csv
 import tracemalloc
 from datetime import datetime
@@ -7,8 +8,6 @@ from time import perf_counter
 
 from pyamaze import agent, maze
 
-
-destino = (1, 1)
 
 
 def h_score(celula, destino):
@@ -162,10 +161,7 @@ def salvar_estatisticas(estatisticas, arquivo_saida="estatisticas.csv"):
         escritor.writerow(registro)
 
 
-def main():
-    labirinto = maze(100, 100)
-    labirinto.CreateMaze()
-
+def main(labirinto, destino):
     agente = agent(labirinto, filled=True, footprints=True)
     caminho, estatisticas = aestrela(labirinto, destino)
 
@@ -182,3 +178,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
