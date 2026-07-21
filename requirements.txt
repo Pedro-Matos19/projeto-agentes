@@ -1,1 +1,1 @@
-pyamaze==1.0.1
+pygame-ce==2.5.7
